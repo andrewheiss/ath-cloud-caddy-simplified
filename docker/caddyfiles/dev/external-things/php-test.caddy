@@ -1,0 +1,7 @@
+php-test.localhost {
+	root * /var/www/html/php-test
+	encode gzip
+	file_server
+	php_fastcgi php:9000
+	try_files {path} {path}/index.php
+}

@@ -1,0 +1,51 @@
+{
+	# E-mail for Let's Encrypt
+	email andrew@andrewheiss.com
+}
+
+# Wildcard domain for a bunch of subdomains if you want, but Let's Encrypt has 
+# super generous rate limits so there's not really any need for this: 
+# https://caddy.community/t/using-wildcard-domains-with-multiple-file-server-sites/22477
+*.classes.localhost {	
+	@course1 host course1.classes.localhost 
+	handle @course1 {
+		root * /var/www/html/classes/course1
+		file_server
+	}
+
+	@course2 host course2.classes.localhost 
+	handle @course2 {
+		root * /var/www/html/classes/course2
+		file_server
+	}
+}
+
+thing1.localhost {
+	root * /var/www/html/thing1
+	encode gzip
+	file_server
+	
+	# Generic error handling page with templates
+	# https://caddyserver.com/docs/caddyfile/directives/handle_errors#examples
+	handle_errors {
+		rewrite * /error.html
+		templates
+		file_server
+	}
+}
+
+thing2.localhost {
+	root * /var/www/html/thing2
+	encode gzip
+	file_server
+	
+	# Specific error pages like 404.html
+	# https://caddyserver.com/docs/caddyfile/directives/handle_errors#examples
+	handle_errors {
+		rewrite * /{err.status_code}.html
+		file_server
+	}
+}
+
+# You can also load settings from other files, like this, just for fun
+import external-things/*
